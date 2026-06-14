@@ -1,0 +1,418 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>StealthNet | Secure Access</title>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar for webkit to match theme if needed, though mostly hidden here */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #273647; border-radius: 4px; }
+    </style>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Design System Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "background": "#051424",
+                        "secondary-container": "#00cbe6",
+                        "primary-fixed": "#e9ddff",
+                        "primary-fixed-dim": "#d0bcff",
+                        "on-primary-fixed": "#23005c",
+                        "on-secondary-container": "#00515d",
+                        "error-container": "#93000a",
+                        "on-primary-container": "#340080",
+                        "surface-container-highest": "#273647",
+                        "tertiary-fixed": "#e2dfff",
+                        "error": "#ffb4ab",
+                        "outline": "#958ea0",
+                        "surface-container": "#122131",
+                        "primary-container": "#a078ff",
+                        "on-error-container": "#ffdad6",
+                        "on-tertiary-fixed": "#191930",
+                        "inverse-primary": "#6d3bd7",
+                        "surface": "#051424",
+                        "inverse-surface": "#d4e4fa",
+                        "on-secondary-fixed-variant": "#004e5a",
+                        "on-secondary-fixed": "#001f25",
+                        "on-primary": "#3c0091",
+                        "on-primary-fixed-variant": "#5516be",
+                        "tertiary": "#c5c4e2",
+                        "surface-container-lowest": "#010f1f",
+                        "primary": "#d0bcff",
+                        "inverse-on-surface": "#233143",
+                        "tertiary-container": "#8f8eaa",
+                        "secondary": "#5de6ff",
+                        "surface-container-low": "#0d1c2d",
+                        "surface-bright": "#2c3a4c",
+                        "secondary-fixed": "#a2eeff",
+                        "secondary-fixed-dim": "#2fd9f4",
+                        "on-tertiary-container": "#27273f",
+                        "on-tertiary-fixed-variant": "#45445d",
+                        "outline-variant": "#494454",
+                        "on-error": "#690005",
+                        "surface-tint": "#d0bcff",
+                        "surface-container-high": "#1c2b3c",
+                        "on-surface-variant": "#cbc3d7",
+                        "on-secondary": "#00363e",
+                        "on-background": "#d4e4fa",
+                        "surface-dim": "#051424",
+                        "on-tertiary": "#2e2e46",
+                        "tertiary-fixed-dim": "#c5c4e2",
+                        "surface-variant": "#273647",
+                        "on-surface": "#d4e4fa"
+                    },
+                    borderRadius: {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    spacing: {
+                        "container-padding": "32px",
+                        "unit": "8px",
+                        "max-width": "1200px",
+                        "gutter": "24px",
+                        "component-gap": "16px"
+                    },
+                    fontFamily: {
+                        "body-lg": ["Inter", "sans-serif"],
+                        "display-lg": ["Outfit", "sans-serif"],
+                        "headline-md": ["Outfit", "sans-serif"],
+                        "label-md": ["Inter", "sans-serif"],
+                        "label-sm": ["Inter", "sans-serif"],
+                        "headline-lg": ["Outfit", "sans-serif"],
+                        "body-md": ["Inter", "sans-serif"]
+                    },
+                    fontSize: {
+                        "body-lg": ["18px", { lineHeight: "1.6", fontWeight: "400" }],
+                        "display-lg": ["48px", { lineHeight: "1.1", letterSpacing: "-0.02em", fontWeight: "700" }],
+                        "headline-md": ["24px", { lineHeight: "1.3", fontWeight: "600" }],
+                        "label-md": ["14px", { lineHeight: "1.4", letterSpacing: "0.05em", fontWeight: "500" }],
+                        "label-sm": ["12px", { lineHeight: "1.2", fontWeight: "600" }],
+                        "headline-lg": ["32px", { lineHeight: "1.2", fontWeight: "600" }],
+                        "body-md": ["16px", { lineHeight: "1.6", fontWeight: "400" }]
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-background text-on-background h-screen w-screen overflow-hidden flex items-center justify-center relative font-body-md text-body-md selection:bg-secondary/30 selection:text-secondary">
+<!-- Ambient Background Animation -->
+<!-- STITCH_SHADER_START:ANIMATION_37 class="absolute inset-0 w-full h-full -z-10 opacity-80 mix-blend-screen" -->
+<div class="absolute inset-0 w-full h-full -z-10 opacity-80 mix-blend-screen" style="display:block;">
+<canvas id="shader-canvas-ANIMATION_37" style="display:block;width:100%;height:100%"></canvas>
+<script>
+(function() {
+  const canvas = document.getElementById('shader-canvas-ANIMATION_37');
+
+  // Sync the WebGL drawing-buffer size with the CSS-driven layout size.
+  // This fires on initial layout and whenever the element is resized.
+  function syncSize() {
+    const w = canvas.clientWidth  || 1280;
+    const h = canvas.clientHeight || 720;
+    if (canvas.width !== w || canvas.height !== h) {
+      canvas.width  = w;
+      canvas.height = h;
+    }
+  }
+  if (typeof ResizeObserver !== 'undefined') {
+    new ResizeObserver(syncSize).observe(canvas);
+  }
+  syncSize();
+
+  const gl = canvas.getContext('webgl') || canvas.getContext('experimental-webgl');
+  if (!gl) return;
+  const vs = `attribute vec2 a_position;
+varying vec2 v_texCoord;
+void main() {
+  v_texCoord = a_position * 0.5 + 0.5;
+  gl_Position = vec4(a_position, 0.0, 1.0);
+}`;
+  const fs = `precision highp float;
+uniform float u_time;
+uniform vec2 u_resolution;
+varying vec2 v_texCoord;
+
+void main() {
+    vec2 uv = v_texCoord;
+    
+    // Smooth organic movement for background orbs
+    vec2 p1 = vec2(0.5 + 0.3 * sin(u_time * 0.4), 0.5 + 0.2 * cos(u_time * 0.5));
+    vec2 p2 = vec2(0.2 + 0.2 * cos(u_time * 0.3), 0.8 + 0.1 * sin(u_time * 0.6));
+    vec2 p3 = vec2(0.8 + 0.1 * sin(u_time * 0.7), 0.2 + 0.3 * cos(u_time * 0.4));
+    
+    float d1 = length(uv - p1);
+    float d2 = length(uv - p2);
+    float d3 = length(uv - p3);
+    
+    // StealthNet Palette: Deep Midnight (#051424), Electric Violet (#8b5cf6), Neon Cyan (#22d3ee)
+    vec3 midnight = vec3(0.02, 0.08, 0.14); 
+    vec3 violet = vec3(0.54, 0.36, 0.96);   
+    vec3 cyan = vec3(0.13, 0.83, 0.93);     
+    
+    // Blend layers with smoothstep for soft glowing edges
+    float f1 = smoothstep(0.7, 0.0, d1);
+    float f2 = smoothstep(0.6, 0.0, d2);
+    float f3 = smoothstep(0.8, 0.0, d3);
+    
+    vec3 color = midnight;
+    color = mix(color, violet, f1 * 0.4);
+    color = mix(color, cyan, f2 * 0.3);
+    color = mix(color, violet, f3 * 0.2);
+    
+    // Fine-grain noise for a high-end textured look
+    float noise = fract(sin(dot(uv, vec2(12.9898, 78.233))) * 43758.5453);
+    color += noise * 0.012;
+    
+    gl_FragColor = vec4(color, 1.0);
+}`;
+  function cs(type, src) {
+    const s = gl.createShader(type);
+    gl.shaderSource(s, src);
+    gl.compileShader(s);
+    return s;
+  }
+  const prog = gl.createProgram();
+  gl.attachShader(prog, cs(gl.VERTEX_SHADER, vs));
+  gl.attachShader(prog, cs(gl.FRAGMENT_SHADER, fs));
+  gl.linkProgram(prog);
+  gl.useProgram(prog);
+  const buf = gl.createBuffer();
+  gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+  gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-1,-1, 1,-1, -1,1, 1,1]), gl.STATIC_DRAW);
+  const pos = gl.getAttribLocation(prog, 'a_position');
+  gl.enableVertexAttribArray(pos);
+  gl.vertexAttribPointer(pos, 2, gl.FLOAT, false, 0, 0);
+  const uTime = gl.getUniformLocation(prog, 'u_time');
+  const uRes = gl.getUniformLocation(prog, 'u_resolution');
+  const uMouse = gl.getUniformLocation(prog, 'u_mouse');
+
+  // u_mouse is in pixel coordinates matching u_resolution (ShaderToy convention).
+  // Shaders that need normalized coords should use: u_mouse / u_resolution.
+  let mouse = { x: canvas.width / 2, y: canvas.height / 2 };
+  window.addEventListener('mousemove', (event) => {
+    const rect = canvas.getBoundingClientRect();
+    if (rect.width && rect.height) {
+      const nx = (event.clientX - rect.left) / rect.width;
+      const ny = 1.0 - (event.clientY - rect.top) / rect.height;
+      mouse.x = nx * canvas.width;
+      mouse.y = ny * canvas.height;
+    }
+  });
+
+  function render(t) {
+    if (typeof ResizeObserver === 'undefined') syncSize();
+    gl.viewport(0, 0, canvas.width, canvas.height);
+    if (uTime) gl.uniform1f(uTime, t * 0.001);
+    if (uRes) gl.uniform2f(uRes, canvas.width, canvas.height);
+    if (uMouse) gl.uniform2f(uMouse, mouse.x, mouse.y);
+    gl.drawArrays(gl.TRIANGLE_STRIP, 0, 4);
+    requestAnimationFrame(render);
+  }
+  render(0);
+})();
+</script>
+</div>
+<!-- STITCH_SHADER_END:ANIMATION_37 -->
+<!-- Main Authentication Container -->
+<main class="relative z-10 w-full max-w-[640px] px-container-padding flex flex-col items-center">
+<!-- The Glassmorphic Card -->
+<div class="w-full bg-surface-container-lowest/60 backdrop-blur-[24px] border border-white/10 rounded-[24px] shadow-[0_0_60px_rgba(109,59,215,0.15)] p-10 flex flex-col gap-10 relative overflow-hidden">
+<!-- Subtle inner top highlight -->
+<div class="absolute top-0 left-0 w-full h-[1px] bg-gradient-to-r from-transparent via-secondary/30 to-transparent"></div>
+<!-- Header -->
+<header class="flex flex-col items-center gap-2 text-center">
+<h1 class="font-display-lg text-display-lg bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent pb-1">StealthNet</h1>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Secure access to the void</p>
+</header>
+<!-- Hidden Alert Box -->
+<div class="hidden w-full flex items-center gap-4 p-4 rounded-xl bg-error/20 border border-error/50 backdrop-blur-[24px] shadow-[0_0_20px_rgba(255,180,171,0.1)] transition-all duration-300 opacity-0 transform -translate-y-2" id="auth-alert">
+<span class="material-symbols-outlined text-error" style="font-variation-settings: 'FILL' 1;">warning</span>
+<span class="font-label-md text-label-md text-white">Error: Connection Refused</span>
+</div>
+<!-- Mode Toggle -->
+<div class="relative flex p-1 bg-surface-container/50 rounded-xl border border-white/5 mx-auto w-3/4 max-w-[320px]">
+<!-- Animated Pill Background -->
+<div class="absolute top-1 bottom-1 left-1 w-[calc(50%-4px)] bg-surface-variant rounded-lg border border-white/10 shadow-[0_0_15px_rgba(93,230,255,0.1)] transition-all duration-300 ease-in-out" id="toggle-pill"></div>
+<button class="relative z-10 flex-1 py-2 text-center rounded-lg font-label-md text-label-md text-secondary transition-colors duration-300" id="btn-signin" onclick="setMode('signin')" type="button">Sign In</button>
+<button class="relative z-10 flex-1 py-2 text-center rounded-lg font-label-md text-label-md text-on-surface-variant hover:text-white transition-colors duration-300" id="btn-register" onclick="setMode('register')" type="button">Create Account</button>
+</div>
+<!-- Form Area -->
+<form class="flex flex-col gap-component-gap" id="auth-form" onsubmit="handleAuth(event)">
+<!-- Username Input -->
+<div class="relative flex items-center bg-surface-container-low/60 border border-white/10 rounded-xl overflow-hidden focus-within:border-secondary focus-within:shadow-[0_0_15px_rgba(93,230,255,0.15)] transition-all duration-300 group">
+<span class="material-symbols-outlined pl-4 text-on-surface-variant group-focus-within:text-secondary transition-colors">person</span>
+<input autocomplete="off" class="w-full bg-transparent border-none py-4 px-4 text-white focus:ring-0 font-body-md text-body-md placeholder:text-on-surface-variant/50" id="username" placeholder="Operator ID" required="" type="text"/>
+</div>
+<!-- Passphrase Input -->
+<div class="relative flex items-center bg-surface-container-low/60 border border-white/10 rounded-xl overflow-hidden focus-within:border-secondary focus-within:shadow-[0_0_15px_rgba(93,230,255,0.15)] transition-all duration-300 group">
+<span class="material-symbols-outlined pl-4 text-on-surface-variant group-focus-within:text-secondary transition-colors">key</span>
+<input class="w-full bg-transparent border-none py-4 px-4 text-white focus:ring-0 font-body-md text-body-md placeholder:text-on-surface-variant/50 pr-12" id="passphrase" placeholder="Passphrase" required="" type="password"/>
+<button class="absolute right-4 text-on-surface-variant hover:text-secondary transition-colors flex items-center justify-center" onclick="togglePassword('passphrase', 'toggle-icon-1')" type="button">
+<span class="material-symbols-outlined" id="toggle-icon-1">visibility</span>
+</button>
+</div>
+<!-- Confirm Passphrase Input (Hidden in Sign In mode) -->
+<div class="hidden opacity-0 h-0 transition-all duration-300 overflow-hidden relative items-center bg-surface-container-low/60 border border-white/10 rounded-xl focus-within:border-secondary focus-within:shadow-[0_0_15px_rgba(93,230,255,0.15)] group flex" id="confirm-pass-wrapper">
+<span class="material-symbols-outlined pl-4 text-on-surface-variant group-focus-within:text-secondary transition-colors">shield</span>
+<input class="w-full bg-transparent border-none py-4 px-4 text-white focus:ring-0 font-body-md text-body-md placeholder:text-on-surface-variant/50 pr-12" id="confirm-passphrase" placeholder="Confirm Passphrase" type="password"/>
+<button class="absolute right-4 text-on-surface-variant hover:text-secondary transition-colors flex items-center justify-center" onclick="togglePassword('confirm-passphrase', 'toggle-icon-2')" type="button">
+<span class="material-symbols-outlined" id="toggle-icon-2">visibility</span>
+</button>
+</div>
+<!-- Submit Button -->
+<button class="mt-6 w-full py-4 rounded-xl font-headline-md text-headline-md text-background bg-gradient-to-r from-inverse-primary to-secondary shadow-[0_0_20px_rgba(109,59,215,0.2)] hover:shadow-[0_0_35px_rgba(93,230,255,0.3)] hover:scale-[1.02] active:scale-[0.98] transition-all duration-300 relative overflow-hidden group" type="submit">
+<span class="relative z-10 flex items-center justify-center gap-2">
+                        Initialize Link
+                        <span class="material-symbols-outlined text-[20px]">arrow_forward</span>
+</span>
+<div class="absolute inset-0 bg-white/20 translate-x-[-100%] group-hover:translate-x-[100%] transition-transform duration-700 ease-in-out"></div>
+</button>
+</form>
+<!-- Footer Links -->
+<footer class="flex justify-between items-center mt-2 px-2">
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary transition-colors duration-200" href="#">Forgot Passphrase?</a>
+<a class="font-label-sm text-label-sm text-on-surface-variant hover:text-secondary transition-colors duration-200" href="#">Terms of Entry</a>
+</footer>
+</div>
+<!-- Connection Status Indicator -->
+<div class="mt-8 flex items-center gap-2 px-4 py-2 rounded-full bg-secondary/10 border-l-2 border-secondary backdrop-blur-md shadow-[0_0_15px_rgba(93,230,255,0.1)]">
+<span class="material-symbols-outlined text-[16px] text-secondary" style="font-variation-settings: 'FILL' 1;">lock</span>
+<span class="font-label-sm text-label-sm text-secondary tracking-wide uppercase">Connection Secure</span>
+</div>
+</main>
+<!-- Interactive Logic -->
+<script>
+        let currentMode = 'signin';
+
+        function setMode(mode) {
+            if (currentMode === mode) return;
+            currentMode = mode;
+
+            const pill = document.getElementById('toggle-pill');
+            const btnSignin = document.getElementById('btn-signin');
+            const btnRegister = document.getElementById('btn-register');
+            const confirmWrapper = document.getElementById('confirm-pass-wrapper');
+            const confirmInput = document.getElementById('confirm-passphrase');
+            const alertBox = document.getElementById('auth-alert');
+
+            // Reset alert state on mode switch
+            alertBox.classList.add('hidden');
+            alertBox.classList.remove('opacity-100', 'translate-y-0');
+            alertBox.classList.add('opacity-0', '-translate-y-2');
+
+            if (mode === 'register') {
+                pill.style.transform = 'translateX(100%)';
+                btnSignin.classList.replace('text-secondary', 'text-on-surface-variant');
+                btnRegister.classList.replace('text-on-surface-variant', 'text-secondary');
+                
+                // Show confirm field
+                confirmWrapper.classList.remove('hidden');
+                // Small delay to allow display:flex to apply before animating opacity/height
+                setTimeout(() => {
+                    confirmWrapper.classList.replace('opacity-0', 'opacity-100');
+                    confirmWrapper.classList.replace('h-0', 'h-[58px]'); // Approx height of input
+                    confirmWrapper.classList.add('mt-4');
+                }, 10);
+                confirmInput.setAttribute('required', 'true');
+
+            } else {
+                pill.style.transform = 'translateX(0)';
+                btnRegister.classList.replace('text-secondary', 'text-on-surface-variant');
+                btnSignin.classList.replace('text-on-surface-variant', 'text-secondary');
+                
+                // Hide confirm field
+                confirmWrapper.classList.replace('opacity-100', 'opacity-0');
+                confirmWrapper.classList.replace('h-[58px]', 'h-0');
+                confirmWrapper.classList.remove('mt-4');
+                
+                setTimeout(() => {
+                    confirmWrapper.classList.add('hidden');
+                }, 300); // Wait for transition
+                confirmInput.removeAttribute('required');
+                confirmInput.value = '';
+            }
+        }
+
+        function togglePassword(inputId, iconId) {
+            const input = document.getElementById(inputId);
+            const icon = document.getElementById(iconId);
+            
+            if (input.type === 'password') {
+                input.type = 'text';
+                icon.textContent = 'visibility_off';
+            } else {
+                input.type = 'password';
+                icon.textContent = 'visibility';
+            }
+        }
+
+        function handleAuth(event) {
+            event.preventDefault();
+            
+            const btn = event.target.querySelector('button[type="submit"]');
+            const originalContent = btn.innerHTML;
+            btn.innerHTML = `<span class="material-symbols-outlined animate-spin">refresh</span>`;
+            
+            const user = document.getElementById('username').value.trim();
+            const pass = document.getElementById('passphrase').value;
+            
+            const ws = new WebSocket('ws://' + window.location.hostname + ':8080/');
+            
+            ws.onopen = () => {
+                const op = currentMode === 'signin' ? 'LOGIN' : 'REGISTER';
+                ws.send(JSON.stringify({
+                    type: op,
+                    username: user,
+                    password: pass
+                }));
+            };
+            
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                if (data.type === 'LOGIN_SUCCESS') {
+                    // Save to session storage for other pages (tab-isolated)
+                    sessionStorage.setItem('stealthnet_user', user);
+                    sessionStorage.setItem('stealthnet_pass', pass);
+                    // Redirect to chat page
+                    window.location.href = 'chat.html?v=' + new Date().getTime();
+                } else if (data.type === 'ERROR') {
+                    const alertBox = document.getElementById('auth-alert');
+                    alertBox.querySelector('span:nth-child(2)').innerText = data.message;
+                    alertBox.classList.remove('hidden');
+                    
+                    void alertBox.offsetWidth; // trigger reflow
+                    
+                    alertBox.classList.remove('opacity-0', '-translate-y-2');
+                    alertBox.classList.add('opacity-100', 'translate-y-0');
+                    btn.innerHTML = originalContent;
+                }
+            };
+            
+            ws.onerror = () => {
+                const alertBox = document.getElementById('auth-alert');
+                alertBox.querySelector('span:nth-child(2)').innerText = "Error: Connection Refused";
+                alertBox.classList.remove('hidden');
+                
+                void alertBox.offsetWidth;
+                
+                alertBox.classList.remove('opacity-0', '-translate-y-2');
+                alertBox.classList.add('opacity-100', 'translate-y-0');
+                btn.innerHTML = originalContent;
+            };
+        }
+    </script>
+</body></html>

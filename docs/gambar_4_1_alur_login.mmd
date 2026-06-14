@@ -1,0 +1,60 @@
+sequenceDiagram
+    autonumber
+    actor U as 👤 Pengguna
+    participant BR as 🖥️ Browser<br/>(chat.html)
+    participant WS as 🔀 WS Proxy<br/>(ws_proxy.py)
+    participant TCP as 🔒 TCP Server<br/>(server.py)
+    participant DB as 🗄️ SQLite<br/>(stealthnet.db)
+
+    Note over U,DB: ══════ FASE 1: KONEKSI & HANDSHAKE ══════
+
+    U->>BR: Buka halaman login.html
+    BR->>WS: WebSocket connect ws://host:8080
+    WS->>TCP: TCP/TLS connect (port 5000)
+    TCP-->>WS: TLS Handshake selesai ✓
+    WS-->>BR: WebSocket connection established ✓
+
+    Note over U,DB: ══════ FASE 2: REGISTRASI / LOGIN ══════
+
+    U->>BR: Input username & password → klik Login
+
+    BR->>WS: WebSocket frame JSON<br/>{"type":"REGISTER","username":"rei","password":"..."}
+    Note over WS: Tambahkan 4-byte<br/>prefix header
+    WS->>TCP: [0x00 0x00 0x00 0x28] + JSON payload
+
+    TCP->>DB: SELECT username FROM users WHERE username=?
+    DB-->>TCP: (null — user baru)
+    TCP->>DB: INSERT INTO users (username, password) VALUES (?,?)
+    DB-->>TCP: OK
+
+    Note over TCP: Auto-login setelah<br/>registrasi berhasil
+
+    TCP->>DB: UPDATE users SET status='online', last_seen=? WHERE username=?
+    DB-->>TCP: OK
+
+    Note over U,DB: ══════ FASE 3: PENGIRIMAN DATA AWAL ══════
+
+    TCP->>WS: [prefix] {"type":"LOGIN_SUCCESS","message":"Welcome rei"}
+    WS->>BR: WebSocket frame → LOGIN_SUCCESS
+
+    TCP->>DB: SELECT user2 FROM friends WHERE user1=?
+    DB-->>TCP: [ ] (daftar teman)
+    TCP->>DB: SELECT room_name, invite_code, role FROM rooms JOIN room_members...
+    DB-->>TCP: [ ] (daftar room)
+    TCP->>DB: SELECT * FROM friend_requests WHERE receiver=? AND status='pending'
+    DB-->>TCP: [ ] (permintaan teman)
+
+    TCP->>WS: [prefix] {"type":"INITIAL_DATA","friends":{},"rooms":[],...}
+    WS->>BR: WebSocket frame → INITIAL_DATA
+
+    Note over U,DB: ══════ FASE 4: BROADCAST STATUS ONLINE ══════
+
+    TCP->>DB: SELECT user1 FROM friends WHERE user2=? (ambil semua teman rei)
+    DB-->>TCP: [daftar username teman]
+
+    loop Untuk setiap teman yang sedang online
+        TCP->>WS: [prefix] {"type":"ONLINE_STATUS","username":"rei","online":true}
+        WS->>BR: Frame → ONLINE_STATUS<br/>(kirim ke browser teman rei)
+    end
+
+    BR-->>U: ✅ UI chat muncul<br/>Daftar teman & room ter-render<br/>Indikator online aktif (titik hijau)

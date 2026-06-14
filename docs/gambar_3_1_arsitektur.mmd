@@ -1,0 +1,79 @@
+graph TB
+    subgraph INTERNET["🌐  INTERNET / BROWSER CLIENT"]
+        BR["🖥️  Web Browser
+        ─────────────────
+        HTML5 + Vanilla JS
+        Web Crypto API (E2EE)
+        WebSocket Client
+        Web Audio API (Voice)"]
+    end
+
+    subgraph DOCKER["🐳  DOCKER COMPOSE NETWORK  (stealthnet_net)"]
+        subgraph C1["📦 Container 1 — nginx  (Port 80)"]
+            NG["⚡ Nginx Web Server
+            ──────────────────────
+            Melayani file statis:
+            • chat.html
+            • login.html
+            Port expose: 80"]
+        end
+
+        subgraph C2["📦 Container 2 — ws-proxy  (Port 8080)"]
+            WS["🔀 WebSocket Proxy Bridge
+            ──────────────────────────
+            Library: asyncio + websockets
+            • Terima koneksi WebSocket
+            • Tambah 4-byte prefix header
+            • Teruskan ke TCP Server
+            • Strip header dari respons
+            Port expose: 8080"]
+        end
+
+        subgraph C3["📦 Container 3 — tcp-backend  (Port 5000)"]
+            TCP["🔒 TCP Server Utama
+            ──────────────────────
+            server.py
+            • Raw TCP Socket
+            • I/O Multiplexing: select()
+            • TLS self-signed cert
+            • JSON Serialization
+            • Routing & Broadcasting
+
+            room_manager.py
+            • CRUD SQLite Database
+            • WAL mode aktif
+            • Thread-safe lock"]
+
+            DB[("🗄️  SQLite Database
+            stealthnet.db
+            ──────────────
+            • users
+            • rooms
+            • room_members
+            • messages
+            • reactions
+            • read_receipts
+            • friends
+            • friend_requests")]
+        end
+    end
+
+    BR -- "HTTP GET /  (port 80)" --> NG
+    NG -- "Kirim chat.html + assets" --> BR
+    BR -- "WebSocket ws://  (port 8080)" --> WS
+    WS -- "TCP/TLS + 4-byte prefix  (port 5000)" --> TCP
+    TCP -- "SQL Query / INSERT" --> DB
+    DB -- "Hasil Query" --> TCP
+    TCP -- "JSON Response + prefix" --> WS
+    WS -- "WebSocket frame" --> BR
+
+    style INTERNET fill:#f0f8ff,stroke:#0288d1,stroke-width:2px,color:#000000
+    style DOCKER fill:#f5f5f5,stroke:#7b1fa2,stroke-width:3px,color:#000000
+    style C1 fill:#ffffff,stroke:#1976d2,stroke-width:2px,color:#000000
+    style C2 fill:#ffffff,stroke:#1976d2,stroke-width:2px,color:#000000
+    style C3 fill:#ffffff,stroke:#1976d2,stroke-width:2px,color:#000000
+    style BR fill:#e1f5fe,stroke:#0288d1,stroke-width:2px,color:#000000
+    style NG fill:#e0f7fa,stroke:#00838f,stroke-width:2px,color:#000000
+    style WS fill:#ede7f6,stroke:#512da8,stroke-width:2px,color:#000000
+    style TCP fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px,color:#000000
+    style DB fill:#fff3e0,stroke:#e65100,stroke-width:2px,color:#000000

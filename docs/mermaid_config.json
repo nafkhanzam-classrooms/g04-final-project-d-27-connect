@@ -1,0 +1,7 @@
+{
+  "theme": "default",
+  "themeVariables": {
+    "fontFamily": "Segoe UI, Tahoma, sans-serif",
+    "fontSize": "14px"
+  }
+}
